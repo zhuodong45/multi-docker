@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t zhuodong45/multi-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true zhudong45/multi-client npm test
+
+after_success:
+  - docker build -t zhuodong45/multi-client ./client
+  - docker build -t zhuodong45/multi-nginx ./nginx
+  - docker build -t zhuodong45/multi-server ./server
+  - docker build -t zhuodong45/multi-worker ./worker
+
+  # login docker hub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push to docker hub
+  - docker push zhuodong45/multi-client
+  - docker push zhuodong45/multi-nginx
+  - docker push zhuodong45/multi-server
+  - docker push zhuodong45/multi-worker
