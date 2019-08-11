@@ -2,13 +2,16 @@ sudo: required
 services:
   - docker
 
+# build docker dev container
 before_install:
   - docker build -t zhuodong45/multi-test -f ./client/Dockerfile.dev ./client
 
+# run test on dev container
 script:
-  - docker run -e CI=true zhudong45/multi-client npm test
+  - docker run -e CI=true zhudong45/multi-test npm test
 
 after_success:
+  # build prod container
   - docker build -t zhuodong45/multi-client ./client
   - docker build -t zhuodong45/multi-nginx ./nginx
   - docker build -t zhuodong45/multi-server ./server
@@ -16,6 +19,7 @@ after_success:
 
   # login docker hub
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
   # push to docker hub
   - docker push zhuodong45/multi-client
   - docker push zhuodong45/multi-nginx
