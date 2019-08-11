@@ -8,7 +8,7 @@ before_install:
 
 # run test on dev container
 script:
-  - docker run -e CI=true zhudong45/multi-test npm test
+  - docker run -e CI=true zhuodong45/multi-test npm test
 
 after_success:
   # build prod container
